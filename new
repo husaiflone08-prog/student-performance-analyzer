@@ -1,0 +1,96 @@
+
+SUBJECTS = ["Python", "Mathematics", "DBMS"]
+
+
+def calculate_result(marks):
+    total = sum(marks.values())
+    percentage = total / len(marks)
+
+    if percentage >= 90:
+        grade = "A+"
+    elif percentage >= 80:
+        grade = "A"
+    elif percentage >= 70:
+        grade = "B"
+    elif percentage >= 60:
+        grade = "C"
+    elif percentage >= 40:
+        grade = "D"
+    else:
+        grade = "F"
+
+    return total, percentage, grade
+
+
+def add_student(students):
+    name = input("Enter student name: ").strip()
+
+    if not name:
+        print("Name cannot be empty.")
+        return
+
+    if any(s["name"].casefold() == name.casefold()
+           for s in students):
+        print("Student already exists.")
+        return
+
+    marks = {}
+
+    for subject in SUBJECTS:
+        while True:
+            try:
+                mark = float(input(f"{subject} marks (0-100): "))
+                if 0 <= mark <= 100:
+                    marks[subject] = mark
+                    break
+                print("Marks must be between 0 and 100.")
+            except ValueError:
+                print("Enter a valid number.")
+
+    students.append({"name": name, "marks": marks})
+    print("Student added successfully.")
+
+
+def display_students(students):
+    if not students:
+        print("No student records found.")
+        return
+
+    ranked = sorted(
+        students,
+        key=lambda s: calculate_result(s["marks"])[1],
+        reverse=True
+    )
+
+    for rank, student in enumerate(ranked, start=1):
+        total, percentage, grade = calculate_result(student["marks"])
+        print(f"\nRank: {rank}")
+        print(f"Name: {student['name']}")
+        print(f"Total: {total}/{len(SUBJECTS) * 100}")
+        print(f"Percentage: {percentage:.2f}%")
+        print(f"Grade: {grade}")
+
+
+def main():
+    students = []
+
+    while True:
+        print("\n--- Student Performance Analyzer ---")
+        print("1. Add student")
+        print("2. Display rankings")
+        print("3. Exit")
+
+        choice = input("Choose an option: ").strip()
+
+        if choice == "1":
+            add_student(students)
+        elif choice == "2":
+            display_students(students)
+        elif choice == "3":
+            break
+        else:
+            print("Invalid choice.")
+
+
+if __name__ == "__main__":
+    main()
